@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="flex-container">
+            <section class="form-section">
+                <h2>Add Your Information</h2>
+                <form id="resumeForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Professional Title</label>
+                        <input type="text" id="title" placeholder="e.g., Software Engineer" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="e.g., youname@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="e.g., +92 123 456 7890" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn URL</label>
+                        <input type="url" id="linkedin" placeholder="e.g., https://linkedin.com/in/username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="github">GitHub URL</label>
+                        <input type="url" id="github" placeholder="e.g., https://github.com/username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="summary">Professional Summary</label>
+                        <textarea id="summary" rows="3" placeholder="Briefly describe your professional background" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="education">Education</label>
+                        <textarea id="education" rows="3" placeholder="List your educational qualifications" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="workExperience">Work Experience</label>
+                        <textarea id="workExperience" rows="3" placeholder="Summarize your work experience" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projects">Key Projects</label>
+                        <textarea id="projects" rows="3" placeholder="Highlight notable projects" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="skills">Skills (comma-separated)</label>
+                        <input type="text" id="skills" placeholder="e.g., JavaScript, Python, SQL" required>
+                    </div>
+                    <button type="submit" class="generate-btn">Generate Resume</button>
+                </form>
+            </section>
+
+            <div class="resume-container">
+                <header class="header">
+                    <h1 id="displayName">Your Name</h1>
+                    <p class="title" id="displayTitle">Your Professional Title</p>
+                    <p class="contact-info" id="displayContact">your.email@example.com | +92 123 456 7890</p>
+                </header>
+
+                <section class="section" id="displaySummarySection">
+                    <h2>Summary</h2>
+                    <p id="displaySummary">Your professional summary will display here.</p>
+                </section>
+
+                <section class="section" id="displayEducationSection">
+                    <h2>Education</h2>
+                    <div class="content">
+                        <p id="displayEducation">Your education details will display here.</p>
+                    </div>
+                </section>
+
+                <section class="section" id="displayExperienceSection">
+                    <h2>Work Experience</h2>
+                    <div class="content">
+                        <p id="displayExperience">Your work experience will display here.</p>
+                    </div>
+                </section>
+
+                <section class="section" id="displayProjectsSection">
+                    <h2>Projects</h2>
+                    <div class="content">
+                        <p id="displayProjects">Your project details will display here.</p>
+                    </div>
+                </section>
+
+                <section class="section skills-section">
+                    <h2>Skills</h2>
+                    <button id="toggleSkills" class="toggle-btn">Show Skills</button>
+                    <ul id="displaySkills"></ul>
+                </section>
+
+                <section class="section">
+                    <h2>Contact Information</h2>
+                    <p id="displayLinkedIn">LinkedIn: <a href="#" id="linkedinURL" target="_blank">Your LinkedIn URL</a></p>
+                    <p id="displayGitHub">GitHub: <a href="#" id="githubURL" target="_blank">Your GitHub URL</a></p>
+                </section>
+
+            <section class="section sharing-section">
+                <h2>Share Your Resume</h2>
+                <div class="sharing-controls">
+                <div class="unique-url-container">
+                <input type="text" id="uniqueUrl" readonly placeholder="Your unique resume URL will appear here">
+                <button id="copyUrl" class="share-btn">Copy URL</button>
+        </div>
+        <div class="sharing-buttons">
+            <button id="downloadPdf" class="share-btn">Download PDF</button>
+            <button id="shareResume" class="share-btn">Share Resume</button>
+        </div>
+    </div>
+</section>
+            </div>
+        </div>
+    </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        </script>
+    <script src="script.js" type="module" defer></script>
+    
+</body>
+</html>
