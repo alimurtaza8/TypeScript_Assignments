@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion,   AnimatePresence } from 'framer-motion';
-import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, } from 'lucide-react';
+import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
 const ParticleField = () => {
@@ -85,7 +85,133 @@ const RoleText = () => {
   );
 };
 
-const UltraModernPortfolio = () => {
+const AboutUs = () => {
+  return (
+    <div>
+    <div className="bg-black text-white min-h-screen p-8">
+      {/* Hero Section with Animated Background */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              background: `url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.3) hue-rotate(45deg)',
+            }}
+            animate={{
+              scale: [1, 1.1, 1],
+              filter: [
+                'brightness(0.3) hue-rotate(45deg)',
+                'brightness(0.4) hue-rotate(90deg)',
+                'brightness(0.3) hue-rotate(45deg)'
+              ]
+            }}
+            transition={{ duration: 20, repeat: Infinity }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-black/50 to-black" />
+        </div>
+
+        <motion.h1 
+          className="relative text-6xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          About Me
+        </motion.h1>
+      </section>
+
+      {/* Main Content */}
+      <section className="relative py-20 px-4 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Bio Section */}
+          <motion.div
+            className="bg-black/50 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30 mb-16"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+              Journey & Experience
+            </h2>
+            <div className="space-y-6 text-gray-300">
+              <p className="text-xl leading-relaxed">
+                As a Web3 developer and AI engineer, I&apos;ve dedicated my career to exploring the intersection of blockchain technology and artificial intelligence. My journey began with a deep fascination for how these technologies could reshape our digital future.
+              </p>
+              <p className="text-xl leading-relaxed">
+                With a background in computer science and a passion for innovation, I&apos;ve worked on various projects ranging from DeFi protocols to AI-powered applications. My expertise spans across smart contract development, machine learning model deployment, and full-stack web development.
+              </p>
+              <p className="text-xl leading-relaxed">
+                I believe in building decentralized solutions that are not only technically robust but also accessible and user-friendly. My goal is to contribute to the Web3 ecosystem while making complex technologies more approachable.
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              {
+                title: "Blockchain Expertise",
+                icon: Database,
+                skills: ["Smart Contract Development", "DeFi Protocol Design", "Web3 Integration", "Blockchain Architecture"],
+                gradient: "from-purple-600 to-blue-600"
+              },
+              {
+                title: "AI & Machine Learning",
+                icon: Brain,
+                skills: ["Deep Learning", "Natural Language Processing", "Computer Vision", "Model Deployment"],
+                gradient: "from-blue-600 to-cyan-600"
+              },
+              {
+                title: "Frontend Development",
+                icon: Layers,
+                skills: ["React/Next.js", "Three.js/WebGL", "Responsive Design", "UI/UX Implementation"],
+                gradient: "from-cyan-600 to-green-600"
+              },
+              {
+                title: "Backend Development",
+                icon: Code,
+                skills: ["Node.js/Express", "Python/Django", "API Design", "Database Management"],
+                gradient: "from-green-600 to-yellow-600"
+              }
+            ].map((category, index) => (
+              <motion.div
+                key={index}
+                className="relative group"
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r rounded-xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
+                <div className="relative bg-black/50 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30">
+                  <div className={`inline-block p-3 rounded-lg bg-gradient-to-r ${category.gradient} mb-4`}>
+                    <category.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-4">{category.title}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill, skillIndex) => (
+                      <span
+                        key={skillIndex}
+                        className={`px-3 py-1 rounded-full text-sm bg-gradient-to-r ${category.gradient} opacity-80 hover:opacity-100 transition-opacity duration-300`}
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+    </div>
+  );
+};
+
+const Portfolio = () => {
   const [,setMousePosition] = useState({ x: 0, y: 0 });
   // const [setActiveSection] = useState('home');
   const containerRef = useRef(null);
@@ -428,6 +554,9 @@ const UltraModernPortfolio = () => {
       ))}
     </div>
 
+    {/* About us code*/}
+
+   <AboutUs/>
   
       <footer className="py-12 px-4 md:px-8 relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-purple-900/20" />
@@ -446,6 +575,6 @@ const UltraModernPortfolio = () => {
   );
 };
 
-export default UltraModernPortfolio;
+export default Portfolio;
 
           
