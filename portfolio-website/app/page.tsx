@@ -50,7 +50,7 @@ const ParticleField = () => {
 
 const RoleText = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const roles = ['Blockchain Engineer', 'GenAI Engineer ', 'Full Stack Developer'];
+  const roles = ['Software Engineer','Blockchain Engineer', 'GenAI Engineer ', 'Full Stack Developer'];
 
   useEffect(() => {
     const interval = setInterval(() => {
