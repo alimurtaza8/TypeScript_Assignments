@@ -5,47 +5,128 @@ import { motion,   AnimatePresence } from 'framer-motion';
 import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
+// const ParticleField = () => {
+//   const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
+
+//   useEffect(() => {
+//     setDimensions({
+//       width: window.innerWidth,
+//       height: window.innerHeight
+//     });
+
+//     const handleResize = () => {
+//       setDimensions({
+//         width: window.innerWidth,
+//         height: window.innerHeight
+//       });
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   return (
+//     <div className="absolute inset-0 overflow-hidden">
+//       {[...Array(50)].map((_, i) => (
+//         <motion.div
+//           key={i}
+//           className="absolute w-2 h-2 bg-white/50 dark:bg-gray-100 rounded-full"
+//           animate={{
+//             x: [Math.random() * dimensions.width, Math.random() * dimensions.width],
+//             y: [Math.random() * dimensions.height, Math.random() * dimensions.height],
+//             scale: [0, 1, 0],
+//           }}
+//           transition={{
+//             duration: Math.random() * 10 + 5,
+//             repeat: Infinity,
+//             ease: "linear",
+//           }}
+//         />
+//       ))}
+//     </div>
+//   );
+// };
+
+interface Particle {
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  duration: number;
+}
+
 const ParticleField = () => {
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
+  const [, setDimensions] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1000,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800
+  });
+  // const [particles, setParticles] = useState([]);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-
-    const handleResize = () => {
+    const updateDimensions = () => {
       setDimensions({
         width: window.innerWidth,
         height: window.innerHeight
       });
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const initializeParticles = () => {
+      const newParticles = Array.from({ length: 50 }, () => ({
+        startX: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+        startY: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+        endX: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+        endY: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
+        duration: Math.random() * 25 + 20  // Slower movement: between 20-45 seconds
+      }));
+      setParticles(newParticles);
+    };
+
+    if (typeof window !== 'undefined') {
+      updateDimensions();
+      initializeParticles();
+      window.addEventListener('resize', updateDimensions);
+      
+      return () => {
+        window.removeEventListener('resize', updateDimensions);
+      };
+    }
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      {[...Array(50)].map((_, i) => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+      {particles.map((particle, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 bg-purple-500/30 rounded-full"
+          className="absolute w-2 h-2 bg-white/50 dark:bg-gray-100 rounded-full"
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            willChange: 'transform'
+          }}
+          initial={{
+            x: particle.startX,
+            y: particle.startY,
+            scale: 0
+          }}
           animate={{
-            x: [Math.random() * dimensions.width, Math.random() * dimensions.width],
-            y: [Math.random() * dimensions.height, Math.random() * dimensions.height],
-            scale: [0, 1, 0],
+            x: [particle.startX, particle.endX, particle.startX],
+            y: [particle.startY, particle.endY, particle.startY],
+            scale: [0, 1, 0]
           }}
           transition={{
-            duration: Math.random() * 10 + 5,
+            duration: particle.duration,
             repeat: Infinity,
             ease: "linear",
+            times: [0, 0.5, 1]
           }}
         />
       ))}
     </div>
   );
 };
+
 
 
 const RoleText = () => {
@@ -110,11 +191,11 @@ const AboutUs = () => {
             }}
             transition={{ duration: 20, repeat: Infinity }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-black/50 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 via-black/50 to-black" />
         </div>
 
         <motion.h1 
-          className="relative text-6xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+          className="relative text-6xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan-600"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -133,7 +214,7 @@ const AboutUs = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+            {/* <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-600">
               Journey & Experience
             </h2>
             <div className="space-y-6 text-gray-300">
@@ -145,36 +226,73 @@ const AboutUs = () => {
               </p>
               <p className="text-xl leading-relaxed">
                 I believe in building decentralized solutions that are not only technically robust but also accessible and user-friendly. My goal is to contribute to the Web3 ecosystem while making complex technologies more approachable.
-              </p>
+              </p> */}
+              <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600">
+                      Journey & Experience
+                    </h2>
+                    <div className="space-y-6 text-gray-300">
+                      <p className="text-xl leading-relaxed">
+                        As a Web3 developer and AI engineer, I&apos;ve dedicated my career to exploring the intersection of blockchain technology and artificial intelligence. My journey began with a deep fascination for how these technologies could reshape our digital future.
+                      </p>
+                      <p className="text-xl leading-relaxed">
+                        With a background in computer science and a passion for innovation, I&apos;ve worked on various projects ranging from Smart Contract Web3 dApps to AI-powered applications. My expertise spans across smart contract development, Agentic AI Assistant development, machine learning model and full-stack web development.
+                      </p>
+                      <p className="text-xl leading-relaxed">
+                        I believe in building decentralized solutions that are not only technically robust but also accessible and user-friendly. My goal is to contribute to the Web3 ecosystem and AI community while making complex technologies more approachable.
+                      </p>
             </div>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
-              {
-                title: "Blockchain Expertise",
-                icon: Database,
-                skills: ["Smart Contract Development", "DeFi Protocol Design", "Web3 Integration", "Blockchain Architecture"],
-                gradient: "from-purple-600 to-blue-600"
-              },
-              {
-                title: "AI & Machine Learning",
-                icon: Brain,
-                skills: ["Deep Learning", "Natural Language Processing", "Computer Vision", "Model Deployment"],
-                gradient: "from-blue-600 to-cyan-600"
-              },
-              {
-                title: "Frontend Development",
-                icon: Layers,
-                skills: ["React/Next.js", "Three.js/WebGL", "Responsive Design", "UI/UX Implementation"],
-                gradient: "from-cyan-600 to-green-600"
-              },
-              {
-                title: "Backend Development",
-                icon: Code,
-                skills: ["Node.js/Express", "Python/Django", "API Design", "Database Management"],
-                gradient: "from-green-600 to-yellow-600"
-              }
+              // {
+              //   title: "Blockchain Expertise",
+              //   icon: Database,
+              //   skills: ["Smart Contract Development", "DeFi Protocol Design", "Web3 Integration", "Blockchain Architecture"],
+              //   gradient: "from-purple-600 to-blue-600"
+              // },
+              // {
+              //   title: "AI & Machine Learning",
+              //   icon: Brain,
+              //   skills: ["Deep Learning", "Natural Language Processing", "Computer Vision", "Model Deployment"],
+              //   gradient: "from-blue-600 to-cyan-600"
+              // },
+              // {
+              //   title: "Frontend Development",
+              //   icon: Layers,
+              //   skills: ["React/Next.js", "Three.js/WebGL", "Responsive Design", "UI/UX Implementation"],
+              //   gradient: "from-cyan-600 to-green-600"
+              // },
+              // {
+              //   title: "Backend Development",
+              //   icon: Code,
+              //   skills: ["Node.js/Express", "Python/Django", "API Design", "Database Management"],
+              //   gradient: "from-green-600 to-yellow-600"
+              // }
+                                    {
+                                      title: "Blockchain Development",
+                                      icon: Database,
+                                      skills: ["Smart Contract Development", "NFT Systems", "Web3 Integration", "DApps"],
+                                      gradient: "from-cyan-600 to-blue-800"
+                                    },
+                                    {
+                                      title: "AI Engineering",
+                                      icon: Brain,
+                                      skills: ["LLM Development","AI Agent", "Natural Language Processing", "Predictive Analytics", "ML Model Deployment"],
+                                      gradient: "from-blue-600 to-cyan-600"
+                                    },
+                                    {
+                                      title: "Frontend Development",
+                                      icon: Layers,
+                                      skills: ["Next.js", "Three.js", "Responsive Design", "UI/UX Implementation"],
+                                      gradient: "from-cyan-600 to-green-600"
+                                    },
+                                    {
+                                      title: "Backend Development",
+                                      icon: Code,
+                                      skills: ["TypeScript", "Python", "Database Management"],
+                                      gradient: "from-green-600 to-yellow-600"
+                                    }
             ].map((category, index) => (
               <motion.div
                 key={index}
@@ -246,52 +364,32 @@ const Portfolio = () => {
   // First, update your projects data to include GitHub links:
   const projects = [
     {
-      title: "Blockchain Funding Contract",
+      title: "Web3 Equipments Rental Marketplace Website",
       category: "Blockchain",
-      image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2070&auto=format&fit=crop",
-      tech: ["Solidity", "Foundry"],
-      description: "Smart Contract for Funding Application",
+      image: "/images/p-1.png",
+      tech: ["Solidity", "NextJs"],
+      description: "Smart Contract based Web3 Marketplace",
+      color: "from-cyan-600 to-blue-600",
+      github: "https://tokenrent.vercel.app/"
+    },
+    {
+      title: "E-Commerce Website",
+      category: "Full Stack",
+      image: "/images/p-5.png",
+      tech: ["Nextjs", "Frontend"],
+      description: "Modern E-Commerce Frontend Website",
       color: "from-purple-600 to-blue-600",
-      github: "https://github.com/alimurtaza8/Smart_Contract_Projects/tree/main/Foundry-Funding-Contract"
+      github: "https://ui-and-ux-hackatone-project.vercel.app/"
     },
     {
-      title: "Blockchain Decentralized-Voting-System",
-      category: "Blockchain",
-      // image: "https://images.unsplash.com/photo-1644088379091-d574269d422f?q=80&w=2073&auto=format&fit=crop",
-      image: "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=2073&auto=format&fit=crop",
-      tech: ["Solidity", "Foundry"],
-      description: "Decentralized-Voting-System Application",
-      color: "from-blue-600 to-orange-600",
-      github: "https://github.com/alimurtaza8/Smart_Contract_Projects/tree/main/Foundry-Decentralized-Voting-System"
-    },
-    {
-      title: "AI diet planner",
-      category: "AI",
-      image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2070&auto=format&fit=crop",
-      tech: ["Python", "OpenAI"],
-      description: "Generative AI system for guiding about diet plan",
+      title: "OrchestrAgent AI Agent Project",
+      category: "AI Agent",
+      image: "/images/p-7.png",
+      tech: ["Python", "langgraph"],
+      description: "Muli AI Agents Working Project",
       color: "from-pink-600 to-purple-600",
-      github: "https://github.com/alimurtaza8/AI-Innovations-Hub/tree/main/AI%20diet%20planner"
+      github: "https://github.com/alimurtaza8/Agentic-AI-Staff/tree/main/OrchestrAgent%20Project"
     },
-    {
-      title: "Ollama llama Text Summarizer",
-      category: "AI",
-      // image: "https://images.unsplash.com/photo-1655720033654-a4239d966b39?q=80&w=2070&auto=format&fit=crop",
-      image: "https://plus.unsplash.com/premium_photo-1677016464632-8b4b92bfa50f?q=80&w=2070&auto=format&fit=crop",
-      tech: ["Python", "Ollama"],
-      description: "Generative AI system for text summarizer",
-      color: "from-yellow-600 to-blue-600",
-      github: "https://github.com/alimurtaza8/AI-Innovations-Hub/tree/main/Ollama%20llama%20Text%20Summarizer"
-    },
-    {
-      title: "House Price Prediction Data Science Project",
-      category: "Data Science",
-      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop",
-      tech: ["Python", "sklearn", "pandas", "numpy", "seaborn"],
-      description: "Great Model for predict the house price",
-      color: "from-blue-600 to-cyan-600",
-      github: "https://github.com/alimurtaza8/Data-Science-Projects/tree/main/California%20House%20Price%20Prediction%20Project"
-    }
   ];
 
 
@@ -315,6 +413,7 @@ const Portfolio = () => {
 
   return (
     <div className="bg-black text-white" ref={containerRef}>
+    {/* // <div className='from-cyan-900/20 via-cyan/50 to-black text-white' ref> */}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Animated Background */}
@@ -322,7 +421,7 @@ const Portfolio = () => {
         <ParticleField />
         
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-black/50 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 via-cyan/50 to-black" />
           <motion.div
             className="absolute inset-0"
             style={{
@@ -353,7 +452,8 @@ const Portfolio = () => {
             <motion.h1 
               className="text-7xl md:text-9xl font-bold mb-8"
               style={{
-                background: 'linear-gradient(to right, #fff, #8b5cf6, #ec4899, #fff)',
+                // background: 'linear-gradient(to right, #fff, #8b5cf6, #ec4899, #fff)',
+                background: 'linear-gradient(to right, #fff, #00FFFF, #0000FF, #fff)',
                 backgroundSize: '200% auto',
                 WebkitBackgroundClip: 'text',
                 backgroundClip: 'text',
@@ -398,7 +498,7 @@ const Portfolio = () => {
               transition={{ delay: 1 }}
             >
               {[
-                { Icon: Globe, gradient: "from-purple-500 to-blue-500" },
+                { Icon: Globe, gradient: "from-cyan-500 to-blue-500" },
                 { Icon: Cpu, gradient: "from-blue-500 to-cyan-500" },
                 { Icon: Brain, gradient: "from-cyan-500 to-green-500" },
                 { Icon: Command, gradient: "from-green-500 to-yellow-500" }
@@ -427,7 +527,7 @@ const Portfolio = () => {
               {[
                 { href: "https://twitter.com/AliMurt90850271", Icon: Twitter, color: "blue" },
                 { href: "https://www.linkedin.com/in/ali-murtaza-361110246/", Icon: Linkedin, color: "indigo" },
-                { href: "https://github.com/alimurtaza8", Icon: Github, color: "purple" }
+                { href: "https://github.com/alimurtaza8", Icon: Github, color: "blue" }
               ].map(({ href, Icon, color }, index) => (
                 <motion.a
                   key={index}
@@ -465,7 +565,7 @@ const Portfolio = () => {
         </motion.div>
       </section>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+    {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
        {projects.map((project, index) => (
       <motion.div
       key={index}
@@ -552,25 +652,78 @@ const Portfolio = () => {
         </motion.div>
       </motion.div>
       ))}
-    </div>
+    </div> */}
+
+    {/* Card Grid */}
+    <section className="relative py-20 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto">
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card className="overflow-hidden bg-gradient-to-br from-gray-900 to-black border-purple-500/30 backdrop-blur-lg h-full">
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block relative group h-full"
+                      >
+                        <div className="relative h-48">
+                          <motion.div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: `url(${project.image})` }}
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ duration: 0.5 }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/90" />
+                        </div>
+    
+                        <div className="p-6">
+                          <h3 className={`text-xl font-bold mb-2 bg-gradient-to-r ${project.color} bg-clip-text text-transparent`}>
+                            {project.title}
+                          </h3>
+                          <p className="text-gray-300 mb-4">{project.description}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {project.tech.map((tech, techIndex) => (
+                              <span
+                                key={techIndex}
+                                className={`px-3 py-1 text-sm rounded-full bg-gradient-to-r ${project.color} opacity-80`}
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+    
+                        <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <div className="flex items-center gap-2 text-white">
+                            <Github className="w-6 h-6" />
+                            <span className="font-medium">View</span>
+                          </div>
+                        </div>
+                      </a>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
+
 
     {/* About us code*/}
 
    <AboutUs/>
-  
-      <footer className="py-12 px-4 md:px-8 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-purple-900/20" />
-        <div className="relative max-w-7xl mx-auto text-center">
-          <motion.p
-            className="text-gray-400"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            © 2024 Ali Murtaza. All rights reserved.
-          </motion.p>
-        </div>
-      </footer>
+
     </div>
   );
 };
