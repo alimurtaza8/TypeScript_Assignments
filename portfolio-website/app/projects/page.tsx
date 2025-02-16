@@ -170,6 +170,16 @@ const projects = [
   },
 
   {
+    title: "MediEquipments Medical Website",
+    category: "Full Stack",
+    image: "/images/medical-image.png",
+    tech: ["Nextjs", "Frontend"],
+    description: "Modern Medical Website",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://mediequip.vercel.app/"
+  },
+
+  {
     title: "OrchestrAgent AI Agent Project",
     category: "AI Agent",
     image: "/images/p-7.png",
