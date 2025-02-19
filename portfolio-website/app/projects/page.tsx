@@ -81,6 +81,17 @@ const projects = [
     color: "from-cyan-600 to-blue-600",
     github: "https://tokenrent.vercel.app/"
   },
+
+  {
+    title: "Defi Decentralized Stable Coin",
+    category: "Blockchain",
+    image: "/images/stable.jpg",
+    tech: ["Solidity", "ERC20"],
+    description: "Smart Contract based Defi Stable Coin",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://github.com/alimurtaza8/Blockchain-Projects/tree/main/Foundry-Defi-StableCoin"
+  },
+
   {
     title: "Blockchain NFT Project ",
     category: "Blockchain",
