@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Mail, Github, Twitter, Linkedin, Database, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import emailjs from "@emailjs/browser";
+import Link from 'next/link';
 
 interface Particle {
   startX: number;
@@ -155,6 +156,7 @@ const ContactPage = () => {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
                     <input
                       type="text"
+                      required
                       name="from_name"
                       placeholder="Your Name"
                       className={`w-full p-4 bg-black/50 backdrop-blur-lg rounded-xl border ${
@@ -169,6 +171,7 @@ const ContactPage = () => {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
                     <input
                       type="email"
+                      required
                       name="user_email"
                       placeholder="Your Email"
                       className={`w-full p-4 bg-black/50 backdrop-blur-lg rounded-xl border ${
@@ -183,6 +186,7 @@ const ContactPage = () => {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
                     <textarea
                       name="message"
+                      required
                       placeholder="Your Message"
                       rows={5}
                       className={`w-full p-4 bg-black/50 backdrop-blur-lg rounded-xl border ${
@@ -248,7 +252,9 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold">Blockchain Address</h3>
-                      <p className="text-gray-400">0x1234...abcd</p>
+                      {/* <p className="text-gray-400"></p>
+                       */}
+                       <Link href="https://sepolia.etherscan.io/address/0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53">0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53</Link>
                     </div>
                   </div>
                 </div>
