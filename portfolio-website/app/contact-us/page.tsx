@@ -254,7 +254,7 @@ const ContactPage = () => {
                       <h3 className="text-lg font-semibold">Blockchain Address</h3>
                       {/* <p className="text-gray-400"></p>
                        */}
-                       <Link href="https://sepolia.etherscan.io/address/0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53">0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53</Link>
+                       <Link href="https://sepolia.etherscan.io/address/0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53" className="text-gray-400">0x5E64eC4d4BcE73195BC6F180c2b20c4160f83D53</Link>
                     </div>
                   </div>
                 </div>
