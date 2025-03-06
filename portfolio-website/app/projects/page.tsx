@@ -191,6 +191,16 @@ const projects = [
   },
 
   {
+    title: "GrowthMindset.AI Agent Project",
+    category: "AI Agent",
+    image: "/images/growth.png",
+    tech: ["Python", "streamlit"],
+    description: "Muli AI Agents Working Project",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://growthmindai.streamlit.app/"
+  },
+
+  {
     title: "OrchestrAgent AI Agent Project",
     category: "AI Agent",
     image: "/images/p-7.png",
@@ -220,8 +230,15 @@ const projects = [
     github: "https://github.com/alimurtaza8/Agentic-AI-Staff/tree/main/Student%20Helper%20Agentic%20ChatAI"
   },
 
-
-
+  {
+    title: "Professional Unit Converter",
+    category: "Unit Converter Scientific System",
+    image: "/images/converter.png",
+    tech: ["Python", "stream"],
+    description: "Muli Support unit converter Working Project",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://uintconverter.streamlit.app/"
+  },
 
   {
     title: "AI Diet Planner",
