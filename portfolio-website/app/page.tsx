@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion,   AnimatePresence } from 'framer-motion';
 import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import Chatbot from '@/components/Chatbot';
 
 // const ParticleField = () => {
 //   const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
@@ -564,6 +565,8 @@ const Portfolio = () => {
           </div>
         </motion.div>
       </section>
+
+      <Chatbot />
 
     {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
        {projects.map((project, index) => (
