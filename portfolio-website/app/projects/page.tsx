@@ -103,8 +103,8 @@ const projects = [
   },
 
   {
-    title: "Blockchain Airdrop Project ",
-    category: "Blockchain",
+    title: "Blockchain Airdrop Project",
+    category: "Blockchain, Smart Contract",
     image: "/images/airdrop.jpg",
     tech: ["Solidity", "MerkleProof","EIP712"],
     description: "Smart Contract based Craw Airdrop",
