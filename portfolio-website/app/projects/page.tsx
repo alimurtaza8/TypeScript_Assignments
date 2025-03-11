@@ -101,6 +101,17 @@ const projects = [
     color: "from-cyan-600 to-blue-600",
     github: "https://github.com/alimurtaza8/Block-Chain-Projects/tree/main/Foundry-NFTs"
   },
+
+  {
+    title: "Blockchain Airdrop Project ",
+    category: "Blockchain",
+    image: "/images/airdrop.jpg",
+    tech: ["Solidity", "MerkleProof","EIP712"],
+    description: "Smart Contract based Craw Airdrop",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://github.com/alimurtaza8/Blockchain-Projects/tree/main/Foundry-Air-Drop"
+  },
+
   {
     title: "Smart Contract Lottery Project",
     category: "Blockchain",
