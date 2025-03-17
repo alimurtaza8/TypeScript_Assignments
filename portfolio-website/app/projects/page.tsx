@@ -170,6 +170,26 @@ const projects = [
     github: "https://vehicalintelligence.vercel.app/"
   },
 
+  {
+    title: "Autos Report Website",
+    category: "Full Stack",
+    image: "/images/autos.png",
+    tech: ["Nextjs", "Frontend"],
+    description: "Modern Autos Report Frontend Website",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://autosreport.vercel.app/"
+  },
+
+  {
+    title: "UK Vins Website",
+    category: "Full Stack",
+    image: "/images/uk.png",
+    tech: ["Nextjs", "Frontend"],
+    description: "Modern UK Vins Frontend Website",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://ukvins.vercel.app/"
+  },
+
 
   {
     title: "E-Commerce Website",

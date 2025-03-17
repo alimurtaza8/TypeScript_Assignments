@@ -382,15 +382,25 @@ const Portfolio = () => {
       color: "from-purple-600 to-blue-600",
       github: "https://ui-and-ux-hackatone-project.vercel.app/"
     },
+    // {
+    //   title: "OrchestrAgent AI Agent Project",
+    //   category: "AI Agent",
+    //   image: "/images/p-7.png",
+    //   tech: ["Python", "langgraph"],
+    //   description: "Muli AI Agents Working Project",
+    //   color: "from-pink-600 to-purple-600",
+    //   github: "https://github.com/alimurtaza8/Agentic-AI-Staff/tree/main/OrchestrAgent%20Project"
+    // },
     {
-      title: "OrchestrAgent AI Agent Project",
+      title: "GrowthMindset.AI Agent Project",
       category: "AI Agent",
-      image: "/images/p-7.png",
-      tech: ["Python", "langgraph"],
+      image: "/images/growth.png",
+      tech: ["Python", "streamlit"],
       description: "Muli AI Agents Working Project",
-      color: "from-pink-600 to-purple-600",
-      github: "https://github.com/alimurtaza8/Agentic-AI-Staff/tree/main/OrchestrAgent%20Project"
+      color: "from-cyan-600 to-blue-600",
+      github: "https://growthmindai.streamlit.app/"
     },
+
   ];
 
 
