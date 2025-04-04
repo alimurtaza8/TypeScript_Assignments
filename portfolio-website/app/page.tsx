@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion,   AnimatePresence } from 'framer-motion';
-import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code, Link } from 'lucide-react';
+import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import Chatbot from '@/components/Chatbot';
 
