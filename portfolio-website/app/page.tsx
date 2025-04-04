@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion,   AnimatePresence } from 'framer-motion';
-import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code } from 'lucide-react';
+import { Github, Twitter, Linkedin, Brain, Globe, Cpu, Command, Database, Layers, Code, Link } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import Chatbot from '@/components/Chatbot';
 
@@ -727,9 +727,28 @@ const Portfolio = () => {
                     </Card>
                   </motion.div>
                 ))}
+                
               </motion.div>
+
+              <div className="flex justify-center mt-12">
+      <motion.a
+        href="/projects" // Replace with your actual GitHub URL
+        // target="_blank"
+        // rel="noopener noreferrer"
+        className="px-8 py-3 rounded-full bg-gradient-to-r from-cyan-800 to-blue-900 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold transition-all duration-300 transform hover:scale-105"
+      
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        See All Projects
+      </motion.a>
+    </div>
+
             </div>
+           
           </section>
+
+              
 
 
 

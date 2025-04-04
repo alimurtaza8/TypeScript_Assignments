@@ -82,6 +82,17 @@ const projects = [
     github: "https://tokenrent.vercel.app/"
   },
 
+
+  {
+    title: "Web3 ICP Emergency Service Website",
+    category: "Blockchain, ICP",
+    image: "/images/Frontend-home-page.png",
+    tech: ["Motoko", "NextJs"],
+    description: "Canister based Web3 Website",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://emergencyserviceplatform.vercel.app/"
+  },
+
   {
     title: "Defi Decentralized Stable Coin",
     category: "Blockchain",
