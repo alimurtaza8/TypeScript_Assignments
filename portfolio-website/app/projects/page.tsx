@@ -283,6 +283,16 @@ const projects = [
   },
 
   {
+    title: "Professional Password Strength Meter",
+    category: "Password Strength Meter Scientific System",
+    image: "/images/password_meter.png",
+    tech: ["Python", "streamlit"],
+    description: "Muli Support Password Strength Meter Working Project",
+    color: "from-cyan-600 to-blue-600",
+    github: "https://passwordstrengthmete.streamlit.app/"
+  },
+
+  {
     title: "AI Diet Planner",
     category: "AI",
     image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=2070&auto=format&fit=crop",
