@@ -1,0 +1,10 @@
+{
+  "routes": [
+    {
+      "src": "/.well-known/walletconnect.txt",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
+    }
+  ]
+} 

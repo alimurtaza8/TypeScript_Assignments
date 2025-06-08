@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect to DApp (Mobile)</title>
-    <!-- WalletConnect v2 SDK -->
-    <script src="https://unpkg.com/@walletconnect/web3-provider@2.0.0/dist/umd/index.min.js"></script>
+    
+    <!-- WalletConnect Dependencies -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,16 +16,17 @@
             margin: 20px;
             background-color: #f0f0f0;
         }
-        input[type="text"] {
-            padding: 10px;
-            width: 80%;
-            max-width: 300px;
-            margin-top: 10px;
-            font-size: 16px;
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         button {
             padding: 12px 24px;
-            margin-top: 10px;
+            margin: 10px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -36,39 +40,81 @@
         #status {
             margin-top: 20px;
             color: #666;
+            padding: 10px;
+        }
+        .address {
+            word-break: break-all;
+            font-family: monospace;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
-    <h1>Connect to DApp</h1>
-    <button onclick="connectWallet()">Connect Wallet</button>
-    <p id="status"></p>
+    <div class="container">
+        <h1>Connect to DApp</h1>
+        <button onclick="connectWallet()">Connect Wallet</button>
+        <div id="status"></div>
+    </div>
 
     <script>
-        const projectId = "0f1f7e3f5b3f1b2ffe4a8aada3702f6b";
-
+        let provider;
+        
         async function connectWallet() {
-            const statusEl = document.getElementById("status");
-            
             try {
-                statusEl.textContent = "Initializing connection...";
-
-                // Direct WalletConnect v2 connection URL
-                const wcUri = `wc:${projectId}@2?relay-protocol=irn&symKey=${projectId}&chainId=11155111`;
+                const status = document.getElementById('status');
+                status.innerHTML = 'Initializing...';
                 
-                // For mobile devices, open MetaMask directly
-                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                    window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUri)}`;
-                } else {
-                    // For desktop, show QR code or open MetaMask
-                    window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUri)}`;
-                }
+                // Initialize WalletConnect
+                provider = new WalletConnectProvider.default({
+                    projectId: "0f1f7e3f5b3f1b2ffe4a8aada3702f6b",
+                    chains: [11155111], // Sepolia
+                    showQrModal: true,
+                    rpc: {
+                        11155111: "https://sepolia.infura.io/v3/0f1f7e3f5b3f1b2ffe4a8aada3702f6b"
+                    }
+                });
 
-                statusEl.textContent = "Opening MetaMask... Please approve the connection request.";
+                status.innerHTML = 'Connecting...';
+
+                // Enable session (triggers QR Code modal)
+                const accounts = await provider.enable();
+                
+                // Create Web3 instance
+                const web3Provider = new ethers.providers.Web3Provider(provider);
+                const signer = web3Provider.getSigner();
+                const address = accounts[0];
+
+                status.innerHTML = `
+                    <h3>Connected!</h3>
+                    <p>Address:</p>
+                    <div class="address">${address}</div>
+                `;
+
+                // Subscribe to accounts change
+                provider.on("accountsChanged", (accounts) => {
+                    status.innerHTML = `
+                        <h3>Account Changed</h3>
+                        <p>New Address:</p>
+                        <div class="address">${accounts[0]}</div>
+                    `;
+                });
+
+                // Subscribe to chainId change
+                provider.on("chainChanged", (chainId) => {
+                    status.innerHTML += `<p>Chain changed to: ${chainId}</p>`;
+                });
+
+                // Subscribe to session disconnection
+                provider.on("disconnect", (code, reason) => {
+                    status.innerHTML = 'Disconnected';
+                });
 
             } catch (error) {
-                console.error("Connection error:", error);
-                statusEl.textContent = "Failed to connect: " + error.message;
+                console.error(error);
+                document.getElementById('status').innerHTML = `Error: ${error.message}`;
             }
         }
     </script>
