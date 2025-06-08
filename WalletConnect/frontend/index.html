@@ -1,145 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DApp Connector</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: #f0f2f5;
-        }
-        .container {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 500px;
-        }
-        h1 {
-            color: #111;
-            margin-bottom: 1rem;
-        }
-        p {
-            color: #666;
-            margin-bottom: 2rem;
-        }
-        input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: monospace;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        button {
-            width: 100%;
-            padding: 1rem;
-            background: #007aff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:disabled {
-            background: #d1d1d6;
-            cursor: not-allowed;
-        }
-        button:hover:not(:disabled) {
-            background: #005ecb;
-        }
-        #status {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            display: none;
-            word-wrap: break-word;
-        }
-        .info {
-            background: #eef5ff;
-            color: #005ecb;
-        }
-        .error {
-            background: #ffebee;
-            color: #c62828;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>WalletConnect via Address</h1>
-        <p>Paste any Ethereum address below and click connect to trigger the DApp connection in your wallet.</p>
-        <input type="text" id="ethAddress" placeholder="0x..." />
-        <button id="connectButton" onclick="connectWallet()">Connect Wallet</button>
-        <div id="status"></div>
-    </div>
+<html>
+  <head>
+    <title>Web3Modal Uniswap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <h1>Connect to Uniswap</h1>
+    <w3m-button></w3m-button>
 
-    <script>
-        // !!! IMPORTANT !!!
-        // REPLACE THIS WITH YOUR ACTUAL RAILWAY DEPLOYMENT URL
-        const BACKEND_API_URL = "https://walletconnect-production.up.railway.app";
+    <script type="module">
+      import { createWeb3Modal, defaultSolanaConfig } from 'https://cdn.jsdelivr.net/npm/@web3modal/solana@4.1.11';
 
-        const statusDiv = document.getElementById('status');
-        const connectButton = document.getElementById('connectButton');
-        const addressInput = document.getElementById('ethAddress');
+      // 1. Get projectID at https://cloud.walletconnect.com
+      const projectId = '0f1f7e3f5b3f1b2ffe4a8aada3702f6b';
 
-        function showStatus(message, type) {
-            statusDiv.textContent = message;
-            statusDiv.className = type;
-            statusDiv.style.display = 'block';
+      // 2. Set chains
+      const chains = [
+        {
+          chainId: 1,
+          name: 'Ethereum',
+          currency: 'ETH',
+          explorerUrl: 'https://etherscan.io',
+          rpcUrl: 'https://cloudflare-eth.com',
+        },
+      ];
+
+      // 3. Create solana configuration
+      const solanaConfig = defaultSolanaConfig({
+        chains,
+        projectId,
+        metadata: {
+            name: 'Uniswap',
+            description: 'Connect to the Uniswap Protocol',
+            url: 'https://wallet-connect-app-iota.vercel.app/',
+            icons: ['https://assets.coingecko.com/coins/images/12504/large/uniswap-uni.png'],
         }
+      });
 
-        async function connectWallet() {
-            const address = addressInput.value.trim();
-            if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
-                showStatus('Please enter a valid Ethereum address.', 'error');
-                return;
-            }
-
-            connectButton.disabled = true;
-            showStatus('Contacting server...', 'info');
-
-            try {
-                // Call the backend to get the WalletConnect URL
-                const response = await fetch(`${BACKEND_API_URL}/get-wc-url?address=${address}`);
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `Server responded with status ${response.status}`);
-                }
-
-                const data = await response.json();
-                const wcUrl = data.wcUrl;
-
-                if (!wcUrl) {
-                    throw new Error('Server did not return a WalletConnect URL.');
-                }
-                
-                showStatus('Received URL. Opening wallet...', 'info');
-                
-                // Use the official MetaMask universal link for maximum compatibility
-                window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUrl)}`;
-
-            } catch (error) {
-                console.error('Connection Error:', error);
-                showStatus(`Error: ${error.message}`, 'error');
-            } finally {
-                connectButton.disabled = false;
-            }
-        }
+      // 4. Create modal
+      createWeb3Modal({
+        solanaConfig,
+        chains,
+        projectId,
+      });
     </script>
-</body>
+  </body>
 </html>
