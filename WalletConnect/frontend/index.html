@@ -3,132 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DApp Address Connector</title>
+    <title>DApp Connector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
         }
         .container {
             background: white;
-            padding: 30px;
+            padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             width: 90%;
+            max-width: 500px;
         }
         h1 {
+            text-align: center;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
         }
         input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
+            padding: 0.75rem;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             font-family: monospace;
+            margin-bottom: 1rem;
         }
         button {
-            background-color: #1969ff;
+            width: 100%;
+            padding: 0.75rem;
+            background: #1a73e8;
             color: white;
             border: none;
-            padding: 15px 30px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin: 10px 0;
-            width: 100%;
+            transition: background 0.2s;
         }
         button:hover {
-            background-color: #0051f4;
+            background: #1557b0;
         }
         #status {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 1rem;
+            padding: 1rem;
             border-radius: 8px;
-            background: #f8f9fa;
-            word-break: break-all;
-        }
-        .success {
-            color: #0a0;
-            background: #e8ffe8 !important;
+            display: none;
         }
         .error {
-            color: #d00;
-            background: #ffe8e8 !important;
+            background: #fde8e8;
+            color: #c81e1e;
+        }
+        .info {
+            background: #e8f0fe;
+            color: #1a73e8;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>DApp Address Connector</h1>
-        <input type="text" id="addressInput" placeholder="Paste Ethereum address (0x...)" />
-        <button onclick="handleConnection()">Connect to DApp</button>
+        <h1>Connect to DApp</h1>
+        <div class="input-group">
+            <input type="text" id="ethAddress" placeholder="Paste ETH address (0x...)" />
+            <button onclick="connect()">Connect</button>
+        </div>
         <div id="status"></div>
     </div>
 
     <script>
-        // Your Ethereum address and WalletConnect URL mapping
-        const ADDRESS_TO_WC = {
-            "0x7a48a40a4369434c37ff3e10653e164009908ce4": "wc:e597203d8a2606ea1d4becb697b9108834b4d215309060894b31e25f95f569b0@2?relay-protocol=irn&symKey=b4afd88f2f713a5fc4b66fb2239626d2b3c160dc5f56af70702974548579305f"
-        };
+        const WALLET_CONNECT_URI = "wc:427d48481a039c0d9932e850de0680cb76363e7d0539bbbfb5b808c64c31b35@2?relay-protocol=irn&symKey=2bb7ec84df0df2de79c8d0635bd1977075cdef6eacc5d5fd67bde373faf5d8683&expiryTimestamp=1746102035";
 
-        async function handleConnection() {
+        function showStatus(message, type = 'info') {
             const status = document.getElementById('status');
-            const addressInput = document.getElementById('addressInput');
-            const address = addressInput.value.toLowerCase().trim();
+            status.textContent = message;
+            status.className = type;
+            status.style.display = 'block';
+        }
+
+        function connect() {
+            const address = document.getElementById('ethAddress').value.trim();
+            
+            // Basic ETH address validation
+            if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
+                showStatus('Please enter a valid Ethereum address', 'error');
+                return;
+            }
 
             try {
-                // Validate Ethereum address format
-                if (!address.match(/^0x[a-f0-9]{40}$/i)) {
-                    throw new Error('Invalid Ethereum address format');
-                }
-
-                // Check if address exists in our mapping
-                const wcUrl = ADDRESS_TO_WC[address];
-                if (!wcUrl) {
-                    throw new Error('Address not registered in the system');
-                }
-
-                // Create WalletConnect connection
-                status.className = 'success';
-                status.innerHTML = 'Connecting...';
-
-                // Try direct WalletConnect protocol
-                const encodedUri = encodeURIComponent(wcUrl);
+                // Direct WalletConnect protocol
+                window.location.href = `wc:?uri=${encodeURIComponent(WALLET_CONNECT_URI)}`;
                 
-                // For mobile: try direct protocol first, then fallback to universal link
-                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                    window.location.href = `wc:?uri=${encodedUri}`;
-                    
-                    // Show connection details
-                    status.innerHTML = `
-                        <p>✅ Connection initiated!</p>
-                        <p>If your wallet didn't open automatically, copy this WalletConnect URL:</p>
-                        <code style="background:#eee;padding:10px;display:block;margin:10px 0;">${wcUrl}</code>
-                    `;
-                } else {
-                    // For desktop: show WalletConnect URL
-                    status.innerHTML = `
-                        <p>✅ Desktop detected!</p>
-                        <p>Open your wallet and paste this WalletConnect URL:</p>
-                        <code style="background:#eee;padding:10px;display:block;margin:10px 0;">${wcUrl}</code>
-                    `;
-                }
-
+                // After a short delay, show manual instructions
+                setTimeout(() => {
+                    showStatus(`If your wallet didn't open automatically, open your wallet and scan this WalletConnect URI: ${WALLET_CONNECT_URI}`);
+                }, 2000);
             } catch (error) {
-                status.className = 'error';
-                status.textContent = `Error: ${error.message}`;
+                showStatus('Error connecting to wallet: ' + error.message, 'error');
             }
         }
     </script>
