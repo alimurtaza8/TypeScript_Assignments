@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uniswap DApp Interaction</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f7f9fc;
+            padding: 20px;
+        }
+        main {
+            background: white;
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 480px;
+        }
+        h1 { color: #1f1f1f; margin-bottom: 1rem; }
+        p { color: #666; margin-bottom: 1.5rem; line-height: 1.5; }
+        #interaction-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            display: none; /* Hidden by default */
+        }
+        #interaction-section button {
+            width: 100%;
+            padding: 1rem;
+            background: #322;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 1rem;
+        }
+        #interaction-section button:hover { background: #444; }
+        #result {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 8px;
+            word-wrap: break-word;
+            text-align: left;
+            font-family: monospace;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>WalletConnect DApp</h1>
+        <p>First, connect your wallet. Then, interact with the Uniswap contract.</p>
+        <w3m-button></w3m-button>
+
+        <div id="interaction-section">
+            <h2>Uniswap V3 Factory</h2>
+            <p>Get the tick spacing for a fee tier. This is a read-only call to a live Uniswap contract.</p>
+            <button id="interactButton">Get Fee Tier Info (0.05%)</button>
+            <pre id="result"></pre>
+        </div>
+    </main>
+
+    <script type="module">
+        import { createWeb3Modal, defaultConfig } from 'https://esm.sh/@web3modal/ethers@4.1.11';
+        import { ethers } from 'https://esm.sh/ethers@5.7.2';
+
+        const projectId = '0f1f7e3f5b3f1b2ffe4a8aada3702f6b';
+
+        const mainnet = {
+            chainId: 1,
+            name: 'Ethereum',
+            currency: 'ETH',
+            explorerUrl: 'https://etherscan.io',
+            rpcUrl: 'https://cloudflare-eth.com'
+        }
+
+        const metadata = {
+            name: 'My DApp',
+            description: 'My DApp for WalletConnect',
+            url: 'https://wallet-connect-app-iota.vercel.app/',
+            icons: ['https://avatars.githubusercontent.com/u/37784886']
+        };
+
+        const ethersConfig = defaultConfig({ metadata });
+
+        const modal = createWeb3Modal({
+            ethersConfig,
+            chains: [mainnet],
+            projectId,
+            enableAnalytics: true
+        });
+
+        // --- DApp Interaction Logic ---
+
+        const interactionSection = document.getElementById('interaction-section');
+        const interactButton = document.getElementById('interactButton');
+        const resultDiv = document.getElementById('result');
+
+        // Uniswap V3 Factory Contract details
+        const uniswapFactoryAddress = '0x1F98431c8aD98523631AE4a59f267346ea31F984';
+        const uniswapFactoryAbi = [
+            'function feeAmountTickSpacing(uint24 fee) external view returns (int24)'
+        ];
+
+        // Listen for connection state changes
+        modal.subscribeState(state => {
+            if (state.open) return; // Do nothing while modal is open
+
+            const provider = modal.getWalletProvider();
+            if (provider) {
+                interactionSection.style.display = 'block';
+            } else {
+                interactionSection.style.display = 'none';
+                resultDiv.style.display = 'none';
+            }
+        });
+        
+        interactButton.onclick = async () => {
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Calling Uniswap contract...';
+
+                const walletProvider = modal.getWalletProvider();
+                if (!walletProvider) throw new Error("Wallet not connected");
+
+                const ethersProvider = new ethers.providers.Web3Provider(walletProvider);
+                const contract = new ethers.Contract(uniswapFactoryAddress, uniswapFactoryAbi, ethersProvider);
+                
+                // Call the 'feeAmountTickSpacing' function for the 0.05% fee tier (500)
+                const tickSpacing = await contract.feeAmountTickSpacing(500);
+
+                resultDiv.textContent = `Uniswap Contract Call Success!\n\nFee Tier: 0.05%\nTick Spacing: ${tickSpacing.toString()}`;
+
+            } catch (error) {
+                console.error("Interaction failed:", error);
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        };
+
+    </script>
+</body>
+</html>
