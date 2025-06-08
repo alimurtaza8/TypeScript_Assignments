@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connect to DApp (Mobile)</title>
+    <!-- WalletConnect v2 SDK -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider@2.0.0/dist/umd/index.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,45 +41,31 @@
 </head>
 <body>
     <h1>Connect to DApp</h1>
-    <p>Enter your Ethereum address:</p>
-    <input type="text" id="ethAddress" placeholder="e.g., 0xC58E66A180C49e8dC00B9ee6b74cd236D100EF98" />
-    <button onclick="connect()">Connect</button>
+    <button onclick="connectWallet()">Connect Wallet</button>
     <p id="status"></p>
 
     <script>
-        async function connect() {
-            const address = document.getElementById("ethAddress").value.toLowerCase();
+        const projectId = "0f1f7e3f5b3f1b2ffe4a8aada3702f6b";
+
+        async function connectWallet() {
             const statusEl = document.getElementById("status");
             
-            if (!address.startsWith("0x") || address.length !== 42) {
-                alert("Invalid Ethereum address!");
-                return;
-            }
-
             try {
-                statusEl.textContent = "Connecting to backend...";
-                const response = await fetch(`https://walletconnect-production.up.railway.app/get-wc?address=${address}`);
-                if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}, Response: ${text}`);
-                }
-                const { wcUrl } = await response.json();
-                console.log("Received WC URL:", wcUrl);
+                statusEl.textContent = "Initializing connection...";
 
-                statusEl.textContent = "Opening MetaMask...";
+                // Direct WalletConnect v2 connection URL
+                const wcUri = `wc:${projectId}@2?relay-protocol=irn&symKey=${projectId}&chainId=11155111`;
                 
-                // Try universal link first for iOS
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUrl)}`;
+                // For mobile devices, open MetaMask directly
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUri)}`;
                 } else {
-                    // For Android and others, try deep link
-                    window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUrl)}`;
+                    // For desktop, show QR code or open MetaMask
+                    window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUri)}`;
                 }
 
-                // Show instructions after a short delay
-                setTimeout(() => {
-                    statusEl.textContent = "Please check your MetaMask app to approve the connection. If MetaMask didn't open, please make sure it's installed.";
-                }, 1000);
+                statusEl.textContent = "Opening MetaMask... Please approve the connection request.";
+
             } catch (error) {
                 console.error("Connection error:", error);
                 statusEl.textContent = "Failed to connect: " + error.message;
