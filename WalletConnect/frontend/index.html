@@ -3,113 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DApp Connector</title>
+    <title>WalletConnect DApp</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background: #f5f5f5;
+            background: #f0f2f5;
         }
         .container {
             background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
         }
         h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-        .input-group {
+            color: #111;
             margin-bottom: 1rem;
         }
-        input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: monospace;
-            margin-bottom: 1rem;
+        p {
+            color: #666;
+            margin-bottom: 2rem;
         }
         button {
             width: 100%;
-            padding: 0.75rem;
-            background: #1a73e8;
+            padding: 1rem;
+            background: #3375ff;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
         }
         button:hover {
-            background: #1557b0;
+            background: #2563eb;
         }
         #status {
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             padding: 1rem;
             border-radius: 8px;
             display: none;
+            word-wrap: break-word;
+        }
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         .error {
-            background: #fde8e8;
-            color: #c81e1e;
-        }
-        .info {
-            background: #e8f0fe;
-            color: #1a73e8;
+            background: #ffebee;
+            color: #c62828;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Connect to DApp</h1>
-        <div class="input-group">
-            <input type="text" id="ethAddress" placeholder="Paste ETH address (0x...)" />
-            <button onclick="connect()">Connect</button>
-        </div>
+        <h1>Connect Your Wallet</h1>
+        <p>Click the button below to connect your wallet securely via WalletConnect.</p>
+        <button id="connectButton">Connect Wallet</button>
         <div id="status"></div>
     </div>
 
-    <script>
-        const WALLET_CONNECT_URI = "wc:427d48481a039c0d9932e850de0680cb76363e7d0539bbbfb5b808c64c31b35@2?relay-protocol=irn&symKey=2bb7ec84df0df2de79c8d0635bd1977075cdef6eacc5d5fd67bde373faf5d8683&expiryTimestamp=1746102035";
+    <script type="module">
+      import { createWeb3Modal, defaultConfig } from 'https://cdn.jsdelivr.net/npm/@web3modal/ethers5@4.1.3/dist/ethers5.js'
 
-        function showStatus(message, type = 'info') {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = type;
-            status.style.display = 'block';
+      // 1. Get a project ID from https://cloud.walletconnect.com
+      const projectId = '0f1f7e3f5b3f1b2ffe4a8aada3702f6b';
+
+      // 2. Set chains
+      const mainnet = {
+        chainId: 1,
+        name: 'Ethereum',
+        currency: 'ETH',
+        explorerUrl: 'https://etherscan.io',
+        rpcUrl: 'https://cloudflare-eth.com'
+      }
+
+      // 3. Create a metadata object
+      const metadata = {
+        name: 'My DApp',
+        description: 'My DApp for WalletConnect',
+        url: 'https://wallet-connect-app-iota.vercel.app/', // origin must match your domain & subdomain
+        icons: ['https://avatars.githubusercontent.com/u/37784886']
+      }
+
+      // 4. Create Ethers config
+      const ethersConfig = defaultConfig({
+        /*Required*/
+        metadata,
+
+        /*Optional*/
+        enableEIP6963: true, // true by default
+        enableInjected: true, // true by default
+        enableCoinbase: true, // true by default
+        rpcUrl: '...', // used for custom RPCs
+        defaultChainId: 1, // used for custom RPCs
+      })
+
+      // 5. Create a Web3Modal instance
+      const modal = createWeb3Modal({
+        ethersConfig,
+        chains: [mainnet],
+        projectId,
+        enableAnalytics: true, // Optional - defaults to your Cloud configuration
+        themeMode: 'light'
+      })
+      
+      const connectButton = document.getElementById('connectButton');
+      const statusDiv = document.getElementById('status');
+      
+      connectButton.addEventListener('click', () => {
+        modal.open();
+      });
+
+      // Listen for connection events
+      modal.subscribeProvider( (newState) => {
+        statusDiv.style.display = 'block';
+        if(newState.isConnected) {
+            statusDiv.className = 'success';
+            statusDiv.innerHTML = `<strong>Connected!</strong><br>Address: ${newState.address}`;
+        } else {
+            statusDiv.className = 'info';
+            statusDiv.innerHTML = 'Connection closed.';
         }
-
-        function connect() {
-            const address = document.getElementById('ethAddress').value.trim();
-            
-            // Basic ETH address validation
-            if (!address.match(/^0x[a-fA-F0-9]{40}$/)) {
-                showStatus('Please enter a valid Ethereum address', 'error');
-                return;
-            }
-
-            try {
-                // Direct WalletConnect protocol
-                window.location.href = `wc:?uri=${encodeURIComponent(WALLET_CONNECT_URI)}`;
-                
-                // After a short delay, show manual instructions
-                setTimeout(() => {
-                    showStatus(`If your wallet didn't open automatically, open your wallet and scan this WalletConnect URI: ${WALLET_CONNECT_URI}`);
-                }, 2000);
-            } catch (error) {
-                showStatus('Error connecting to wallet: ' + error.message, 'error');
-            }
-        }
+      });
     </script>
 </body>
 </html>
