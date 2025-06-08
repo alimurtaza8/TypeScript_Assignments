@@ -130,8 +130,8 @@
                 
                 showStatus('Received URL. Opening wallet...', 'info');
                 
-                // Trigger the WalletConnect URI
-                window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUrl)}`;
+                // Use the official MetaMask universal link for maximum compatibility
+                window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUrl)}`;
 
             } catch (error) {
                 console.error('Connection Error:', error);
