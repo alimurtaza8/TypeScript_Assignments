@@ -10,18 +10,19 @@ app.use(cors({
     credentials: true
 }));
 
-// Predefined WalletConnect URL (replace with your actual URL in production)
-const WC_URL = "wc:e597203d8a2606ea1d4becb697b9108834b4d215309060894b31e25f95f569b0@2?relay-protocol=irn&symKey=b4afd88f2f713a5fc4b66fb2239626d2b3c160dc5f56af70702974548579305f&expiryTimestamp=1746277106";
-
 app.use(express.json());
 
 app.get('/get-wc', (req, res) => {
     const { address } = req.query;
-    console.log("Request received for address:", address); // Debug log
+    
     if (!address || !address.startsWith("0x") || address.length !== 42) {
         return res.status(400).json({ error: "Invalid Ethereum address" });
     }
-    res.json({ wcUrl: WC_URL });
+
+    // Using Uniswap's WalletConnect URL format
+    const wcUrl = "wc:3c1fc06c-581c-4f0c-9c96-079f3c0e0000@2?relay-protocol=irn&symKey=0f1f7e3f5b3f1b2ffe4a8aada3702f6b";
+    
+    res.json({ wcUrl });
 });
 
 app.listen(PORT, () => {
