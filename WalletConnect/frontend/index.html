@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect to 1inch</title>
+    <title>DApp Address Connector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,97 +21,114 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            max-width: 600px;
             width: 90%;
         }
         h1 {
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: monospace;
         }
         button {
-            background-color: #0c0b0b;
+            background-color: #1969ff;
             color: white;
             border: none;
             padding: 15px 30px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 18px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: background-color 0.2s;
+            margin: 10px 0;
             width: 100%;
-            max-width: 300px;
-            font-weight: bold;
         }
         button:hover {
-            background-color: #2d2d2d;
-            transform: translateY(-2px);
+            background-color: #0051f4;
         }
         #status {
             margin-top: 20px;
-            color: #666;
-            line-height: 1.5;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            word-break: break-all;
         }
-        .link {
-            color: #0c0b0b;
-            text-decoration: none;
-            font-weight: bold;
+        .success {
+            color: #0a0;
+            background: #e8ffe8 !important;
         }
-        .link:hover {
-            text-decoration: underline;
+        .error {
+            color: #d00;
+            background: #ffe8e8 !important;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Connect Wallet</h1>
-        <button onclick="connectWallet()">Connect to 1inch</button>
+        <h1>DApp Address Connector</h1>
+        <input type="text" id="addressInput" placeholder="Paste Ethereum address (0x...)" />
+        <button onclick="handleConnection()">Connect to DApp</button>
         <div id="status"></div>
     </div>
 
     <script>
-        // 1inch WalletConnect URL (known working)
-        const WC_URI = "wc:0c206b61-8906-4aed-9b87-3514dc50e8ee@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=d023347f63b3b12753b404425ccdc6e4d759f6a0e18a9d2c229237e769dc4428";
+        // Your Ethereum address and WalletConnect URL mapping
+        const ADDRESS_TO_WC = {
+            "0x7a48a40a4369434c37ff3e10653e164009908ce4": "wc:e597203d8a2606ea1d4becb697b9108834b4d215309060894b31e25f95f569b0@2?relay-protocol=irn&symKey=b4afd88f2f713a5fc4b66fb2239626d2b3c160dc5f56af70702974548579305f"
+        };
 
-        function connectWallet() {
+        async function handleConnection() {
             const status = document.getElementById('status');
-            
-            try {
-                status.textContent = 'Initiating connection...';
+            const addressInput = document.getElementById('addressInput');
+            const address = addressInput.value.toLowerCase().trim();
 
-                // For mobile devices
-                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-                    // Try MetaMask deep link first
-                    window.location.href = `metamask://wc?uri=${encodeURIComponent(WC_URI)}`;
-                    
-                    // Fallback to universal link after a short delay
-                    setTimeout(() => {
-                        window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(WC_URI)}`;
-                    }, 1000);
-                } else {
-                    // For desktop: open in new tab
-                    window.open(`https://metamask.app.link/wc?uri=${encodeURIComponent(WC_URI)}`, '_blank');
+            try {
+                // Validate Ethereum address format
+                if (!address.match(/^0x[a-f0-9]{40}$/i)) {
+                    throw new Error('Invalid Ethereum address format');
                 }
 
-                // Update status with instructions
-                setTimeout(() => {
-                    const encodedUri = encodeURIComponent(WC_URI);
+                // Check if address exists in our mapping
+                const wcUrl = ADDRESS_TO_WC[address];
+                if (!wcUrl) {
+                    throw new Error('Address not registered in the system');
+                }
+
+                // Create WalletConnect connection
+                status.className = 'success';
+                status.innerHTML = 'Connecting...';
+
+                // Try direct WalletConnect protocol
+                const encodedUri = encodeURIComponent(wcUrl);
+                
+                // For mobile: try direct protocol first, then fallback to universal link
+                if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+                    window.location.href = `wc:?uri=${encodedUri}`;
+                    
+                    // Show connection details
                     status.innerHTML = `
-                        <p>🔄 Connecting...</p>
-                        <p>1. Open your MetaMask app if it didn't open automatically</p>
-                        <p>2. In MetaMask, tap the three dots (...) menu</p>
-                        <p>3. Select "WalletConnect"</p>
-                        <p>4. Choose "New Connection"</p>
-                        <p>5. Paste this connection URL:</p>
-                        <p style="word-break: break-all; background: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px;">${WC_URI}</p>
-                        <p><a href="metamask://wc?uri=${encodedUri}" class="link">Try connecting again</a></p>
+                        <p>✅ Connection initiated!</p>
+                        <p>If your wallet didn't open automatically, copy this WalletConnect URL:</p>
+                        <code style="background:#eee;padding:10px;display:block;margin:10px 0;">${wcUrl}</code>
                     `;
-                }, 2000);
+                } else {
+                    // For desktop: show WalletConnect URL
+                    status.innerHTML = `
+                        <p>✅ Desktop detected!</p>
+                        <p>Open your wallet and paste this WalletConnect URL:</p>
+                        <code style="background:#eee;padding:10px;display:block;margin:10px 0;">${wcUrl}</code>
+                    `;
+                }
 
             } catch (error) {
-                console.error('Connection error:', error);
-                status.innerHTML = `
-                    <p>Error: ${error.message}</p>
-                    <p>Please make sure MetaMask is installed and try again.</p>
-                `;
+                status.className = 'error';
+                status.textContent = `Error: ${error.message}`;
             }
         }
     </script>
